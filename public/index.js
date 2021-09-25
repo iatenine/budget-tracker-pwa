@@ -34,15 +34,12 @@ function createDb() {
 
   request.onupgradeneeded = function (event) {
     db = event.target.result;
-
-    const store = db.createObjectStore("transactions", { keyPath: "_id" });
-
-    store.transaction.oncomplete = function (event) {
-      console.log("Database upgrade transaction complete", event);
-      console.log("ObjectStore created ", store);
-      console.log("Database upgraded");
-    };
+    db.createObjectStore("transactions", { keyPath: "_id" });
   };
+}
+
+function deleteDb() {
+  return window.indexedDB.deleteDatabase("budget");
 }
 
 function populateTotal() {
