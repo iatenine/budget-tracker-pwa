@@ -1,5 +1,6 @@
 let transactions = [];
 let myChart;
+let db = null;
 
 fetch("/api/transaction")
   .then((response) => {
@@ -7,6 +8,10 @@ fetch("/api/transaction")
   })
   .then((data) => {
     // save db data on global variable
+    // Create indexed db
+
+    console.log("transaction data: ", data);
+    createDb();
 
     transactions = data;
 
@@ -14,6 +19,31 @@ fetch("/api/transaction")
     populateTable();
     populateChart();
   });
+
+function createDb() {
+  let request = window.indexedDB.open("budget", 1);
+
+  request.onsuccess = function (event) {
+    db = event.target.result;
+    console.log("Database opened", db);
+  };
+
+  request.onerror = function (event) {
+    console.log("Database error: " + event.target.errorCode);
+  };
+
+  request.onupgradeneeded = function (event) {
+    db = event.target.result;
+
+    const store = db.createObjectStore("transactions", { keyPath: "_id" });
+
+    store.transaction.oncomplete = function (event) {
+      console.log("Database upgrade transaction complete", event);
+      console.log("ObjectStore created ", store);
+      console.log("Database upgraded");
+    };
+  };
+}
 
 function populateTotal() {
   // reduce transaction amounts to a single total value
