@@ -11,7 +11,7 @@ fetch("/api/transaction")
     // Create indexed db
 
     console.log("transaction data: ", data);
-    createDb();
+    createDb(data);
 
     transactions = data;
 
@@ -20,12 +20,13 @@ fetch("/api/transaction")
     populateChart();
   });
 
-function createDb() {
-  let request = window.indexedDB.open("budget", 1);
+function createDb(transactions) {
+  let request = window.indexedDB.open("budget");
 
   // Why are these changes being ignored by Git??
   request.onsuccess = function (event) {
     db = event.target.result;
+    addData(transactions);
     console.log("Database opened", db);
   };
 
@@ -39,8 +40,12 @@ function createDb() {
   };
 }
 
-function deleteDb() {
-  return window.indexedDB.deleteDatabase("budget");
+function addData(data) {
+  const transaction = db.transaction("transactions", "readwrite");
+  const store = transaction.objectStore("transactions");
+  console.log("store: ", store);
+
+  data.forEach((elem) => store.add(elem));
 }
 
 function populateTotal() {
