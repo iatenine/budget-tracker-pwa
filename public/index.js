@@ -23,7 +23,6 @@ fetch("/api/transaction")
 function createDb(transactions) {
   let request = window.indexedDB.open("budget");
 
-  // Why are these changes being ignored by Git??
   request.onsuccess = function (event) {
     db = event.target.result;
     addData(transactions);

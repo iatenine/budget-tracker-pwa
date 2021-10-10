@@ -6,6 +6,7 @@ const compression = require("compression");
 const PORT = 3000;
 
 const app = express();
+const mongodb = process.env.MONGODB_URI || "mongodb://localhost/budget";
 
 app.use(logger("dev"));
 
@@ -15,9 +16,9 @@ app.use(express.json());
 
 app.use(express.static("public"));
 
-mongoose.connect("mongodb://localhost/budget", {
+mongoose.connect(mongodb, {
   useNewUrlParser: true,
-  useFindAndModify: false
+  useFindAndModify: false,
 });
 
 // routes
